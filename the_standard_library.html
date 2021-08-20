@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>标准库 &mdash; CPython Internal 笔记 0.0.1 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="CPython Internal 笔记" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> CPython Internal 笔记
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">标准库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python">Python 模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-c">Python 和 C 模块</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CPython Internal 笔记</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>标准库</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/the_standard_library.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>标准库<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>Python 总是“开箱即用”。这意味着在标准的 CPython 发行版中，
+有一些用于处理文件、线程、网络、网站、音乐、键盘、屏幕、文本的库，以及各种实用程序的库。</p>
+<p>CPython 附带的库中，有一些对所有东西都很有用，比如 <code class="docutils literal notranslate"><span class="pre">collections</span></code> 模块和 <code class="docutils literal notranslate"><span class="pre">sys</span></code> 模块。
+另外一些比较模糊，你永远不知道什么时候会派上用场。</p>
+<p>CPython 标准库中有两种类型的模块：</p>
+<ol class="simple">
+<li><p>那些用纯 Python 编写的实用程序库；</p></li>
+<li><p>那些使用 Python 包装器的用 C 编写的库。</p></li>
+</ol>
+<p>本章中探索这两种类型。</p>
+<div class="section" id="python">
+<h2>Python 模块<a class="headerlink" href="#python" title="永久链接至标题">¶</a></h2>
+<p>纯 Python 编写的模块都位于源代码中的 <code class="docutils literal notranslate"><span class="pre">Lib</span></code> 目录中。
+一些较大的模块在子文件夹中有子模块，例如 <code class="docutils literal notranslate"><span class="pre">email</span></code> 模块。
+一个容易查看的模块是 <code class="docutils literal notranslate"><span class="pre">colorsys</span></code> 模块。它只有几百行 Python 代码。
+<code class="docutils literal notranslate"><span class="pre">colorsys</span></code> 模块有一些用于转换色阶的实用函数。</p>
+<p>从源代码安装 Python 发行版时，标准库模块会从 <code class="docutils literal notranslate"><span class="pre">Lib</span></code> 文件夹复制到发行版文件夹中。
+当启动 Python 时，此文件夹始终是你路径的一部分，因此你可以导入模块而无需担心它们的位置。</p>
+<p>例如：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">colorsys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colorsys</span>
+<span class="go">&lt;module &#39;colorsys&#39; from &#39;/usr/shared/lib/python3.7/colorsys.py&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colorsys</span><span class="o">.</span><span class="n">rgb_to_hls</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">127.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.007905138339921</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>我们可以在 <code class="docutils literal notranslate"><span class="pre">Lib/colorsys.py</span></code> 里面看到 <code class="docutils literal notranslate"><span class="pre">rgb_to_hls()</span></code> 的源码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># HLS: Hue, Luminance, Saturation</span>
+<span class="c1"># H: position in the spectrum</span>
+<span class="c1"># L: color lightness</span>
+<span class="c1"># S: color saturation</span>
+<span class="k">def</span> <span class="nf">rgb_to_hls</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">maxc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">minc</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="c1"># XXX Can optimize (maxc+minc) and (maxc-minc) l = (minc+maxc)/2.0</span>
+    <span class="k">if</span> <span class="n">minc</span> <span class="o">==</span> <span class="n">maxc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="n">l</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">minc</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxc</span><span class="o">+</span><span class="n">minc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">minc</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">-</span><span class="n">maxc</span><span class="o">-</span><span class="n">minc</span><span class="p">)</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">minc</span><span class="p">)</span>
+    <span class="n">gc</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">g</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">minc</span><span class="p">)</span>
+    <span class="n">bc</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxc</span><span class="o">-</span><span class="n">minc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="n">maxc</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">bc</span><span class="o">-</span><span class="n">gc</span>
+    <span class="k">elif</span> <span class="n">g</span> <span class="o">==</span> <span class="n">maxc</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">+</span><span class="n">rc</span><span class="o">-</span><span class="n">bc</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">+</span><span class="n">gc</span><span class="o">-</span><span class="n">rc</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span><span class="o">/</span><span class="mf">6.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">s</span>
+</pre></div>
+</div>
+<p>这个函数没有什么特别之处，它只是标准的 Python。你会发现所有纯 Python 标准库模块都有类似的东西。
+它们只是用简单的 Python 编写的，布局合理且易于理解。
+你甚至可以发现改进或错误，因此你可以对它们进行更改并将其贡献给 Python 发行版。
+我们将在本书结尾处介绍这一点。</p>
+</div>
+<div class="section" id="python-c">
+<h2>Python 和 C 模块<a class="headerlink" href="#python-c" title="永久链接至标题">¶</a></h2>
+<p>其余模块是用 C 编写的，或者是 Python 和 C 的组合。
+这些的源代码中，Python 组件在 <code class="docutils literal notranslate"><span class="pre">Lib</span></code> 中，C 组件在 <code class="docutils literal notranslate"><span class="pre">Modules</span></code> 中。
+此规则有两个例外，<code class="docutils literal notranslate"><span class="pre">sys</span></code> 模块在 <code class="docutils literal notranslate"><span class="pre">Python/sysmodule.c</span></code> 中，
+<code class="docutils literal notranslate"><span class="pre">__builtins__</span></code> 模块在 <code class="docutils literal notranslate"><span class="pre">Python/bltinmodule.c</span></code> 中。</p>
+<p>当解释器被实例化时，Python 将 <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">*</span> <span class="pre">from</span> <span class="pre">__builtins__</span></code>，因此所有的函数，
+如 <code class="docutils literal notranslate"><span class="pre">print()</span></code>、<code class="docutils literal notranslate"><span class="pre">chr()</span></code>、<code class="docutils literal notranslate"><span class="pre">format()</span></code> 等，都可以在 <code class="docutils literal notranslate"><span class="pre">Python/bltinmodule.c</span></code> 中找到。</p>
+<p>因为 <code class="docutils literal notranslate"><span class="pre">sys</span></code> 模块非常特定于解释器和 CPython 的内部结构，所以可以在 <code class="docutils literal notranslate"><span class="pre">Python</span></code> 目录中找到。
+它也被标记为 CPython 的“实现细节”，在其他发行版中找不到。</p>
+<p>内置的 <code class="docutils literal notranslate"><span class="pre">print()</span></code> 函数可能是你在 Python 中学会的第一件事。
+那么当你输入 <code class="docutils literal notranslate"><span class="pre">print(&quot;hello</span> <span class="pre">world!&quot;)</span></code> 时会发生什么？</p>
+<ol class="simple">
+<li><p>参数 <code class="docutils literal notranslate"><span class="pre">&quot;hello</span> <span class="pre">world&quot;</span></code> 被编译器从字符串常量转换为 <code class="docutils literal notranslate"><span class="pre">PyUnicodeObject</span></code>；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">builtin_print()</span></code> 使用 1 个参数执行，并且 <code class="docutils literal notranslate"><span class="pre">kwnames</span></code> 为 NULL；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">file</span></code> 变量设置为 <code class="docutils literal notranslate"><span class="pre">PyId_stdout</span></code>，即系统的 <code class="docutils literal notranslate"><span class="pre">stdout</span></code> 句柄；</p></li>
+<li><p>每个参数将发送给 <code class="docutils literal notranslate"><span class="pre">file</span></code>；</p></li>
+<li><p>一个换行符号 <code class="docutils literal notranslate"><span class="pre">\n</span></code> 将被发送给 <code class="docutils literal notranslate"><span class="pre">file</span></code>。</p></li>
+</ol>
+<p><code class="docutils literal notranslate"><span class="pre">Python/bltinmodule.c</span></code> 第1828行：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span> <span class="o">*</span>
+<span class="n">builtin_print</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="k">const</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">Py_ssize_t</span> <span class="n">nargs</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">kwnames</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">file</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">file</span> <span class="o">==</span> <span class="n">Py_None</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">_PySys_GetObjectId</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PyId_stdout</span><span class="p">);</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nargs</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">sep</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="n">PyFile_WriteString</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">);</span>
+            <span class="k">else</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="n">PyFile_WriteObject</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span>
+                                         <span class="n">Py_PRINT_RAW</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">PyFile_WriteObject</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">file</span><span class="p">,</span> <span class="n">Py_PRINT_RAW</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">end</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">PyFile_WriteString</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">PyFile_WriteObject</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">Py_PRINT_RAW</span><span class="p">);</span>
+    <span class="p">...</span>
+
+    <span class="n">Py_RETURN_NONE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>一些用 C 编写的模块的内容使用了操作系统函数。
+由于 CPython 源代码需要编译到 macOS、Windows、Linux 和其他基于 *nix 的操作系统，因此存在一些特殊情况。</p>
+<p><code class="docutils literal notranslate"><span class="pre">time</span></code> 模块就是一个很好的例子。 Windows 在操作系统中保存和存储时间的方式与 Linux 和 macOS 有着根本的不同。
+这是 <a class="reference external" href="https://docs.python.org/3/library/time.html#time.clock_gettime_ns">操作系统之间</a> 时钟功能精度不同的原因之一。</p>
+<p>在 <code class="docutils literal notranslate"><span class="pre">Modules/timemodule.c</span></code> 中，基于 Unix 系统的操作系统时间函数是从 <code class="docutils literal notranslate"><span class="pre">&lt;sys/times.h&gt;</span></code> 导入的：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifdef HAVE_SYS_TIMES_H</span>
+<span class="cp">#include</span> <span class="cpf">&lt;sys/times.h&gt;</span><span class="cp"></span>
+<span class="cp">#endif</span>
+<span class="p">...</span>
+<span class="cp">#ifdef MS_WINDOWS</span>
+<span class="cp">#define WIN32_LEAN_AND_MEAN</span>
+<span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pythread.h&quot;</span><span class="cp"></span>
+<span class="cp">#endif </span><span class="cm">/* MS_WINDOWS */</span><span class="cp"></span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>在文件的后面，<code class="docutils literal notranslate"><span class="pre">time_process_time_ns()</span></code> 被定义为 <code class="docutils literal notranslate"><span class="pre">_PyTime_GetProcessTimeWithInfo()</span></code> 的包装器：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span> <span class="o">*</span>
+<span class="n">time_process_time_ns</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">unused</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">_PyTime_t</span> <span class="n">t</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">_PyTime_GetProcessTimeWithInfo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">t</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">_PyTime_AsNanosecondsObject</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">_PyTime_GetProcessTimeWithInfo()</span></code> 在源代码中有多种不同的实现方式，但根据操作系统的不同，
+只有某些部分被编译成模块的二进制文件。
+Windows 系统将调用 <code class="docutils literal notranslate"><span class="pre">GetProcessTimes()</span></code>，Unix 系统将调用 <code class="docutils literal notranslate"><span class="pre">clock_gettime()</span></code>。</p>
+<p>对同一 API 具有多个实现的其他模块是 <a class="reference external" href="https://realpython.com/intro-to-python-threading/">threading 模块</a>、文件系统模块和网络模块。
+由于操作系统的行为不同，CPython 源代码尽可能地实现相同的行为，并暴露一致的抽象 API。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="index.html" class="btn btn-neutral float-left" title="CPython Internal 笔记" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; 版权所有 2021, qiwihui.
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
