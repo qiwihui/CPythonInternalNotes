@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>编译 CPython &mdash; CPython Internal 笔记 0.0.1 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="标准库" href="the_standard_library.html" />
+    <link rel="prev" title="设置开发环境" href="setting_up_your_development_environment.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> CPython Internal 笔记
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setting_up_your_development_environment.html">设置开发环境</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">编译 CPython</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#macos-cpython">在 macOS 系统上编译 CPython</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="the_standard_library.html">标准库</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CPython Internal 笔记</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>编译 CPython</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/compiling_cpython.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cpython">
+<h1>编译 CPython<a class="headerlink" href="#cpython" title="永久链接至标题">¶</a></h1>
+<p>现在你已经下载了 CPython 开发环境并对其进行了配置，你可以将 CPython 源代码编译成一个可执行的解释器。</p>
+<p>与 Python 文件不同，C 源代码每次更改时都必须重新编译。</p>
+<p>在前一章中，我们已经设置开发环境，并设置了运行“Build”阶段的选项，该选项将重新编译 CPython。
+在构建步骤工作之前，你需要一个 C 编译器和一些构建工具。
+使用的工具取决于你使用的操作系统。</p>
+<blockquote>
+<div><p>如果你担心这些步骤中的任何一个会干扰您现有的 CPython 安装，请不要担心。CPython 源目录的行为就像一个虚拟环境。</p>
+<p>对于编译 CPython、修改源代码和标准库，这些都保留在源目录的沙箱中。</p>
+<p>如果要安装自定义版本，本章也将介绍此步骤。</p>
+</div></blockquote>
+<div class="section" id="macos-cpython">
+<h2>在 macOS 系统上编译 CPython<a class="headerlink" href="#macos-cpython" title="永久链接至标题">¶</a></h2>
+<p>在 macOS 上编译 CPython 需要一些额外的应用程序和库。你首先需要基本的 C 编译器工具包。
+“Command Line Development Tools” 是一个可以在 macOS 中通过 App Store 更新的应用程序。
+你需要在终端上执行初始安装。</p>
+<p>在终端中，通过运行以下命令安装 C 编译器和工具包：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ xcode-select --install
+</pre></div>
+</div>
+<p>该命令会弹出一个提示，提示下载并安装一组工具，包括 Git、Make 和 GNU C 编译器。</p>
+<p>你还需要一份 <a class="reference external" href="https://www.openssl.org/">OpenSSL</a> 的工作副本，用于从 PyPi.org 网站获取包。
+如果你以后计划使用此构建版本来安装其他软件包，则需要进行 SSL 验证。</p>
+<p>在 macOS 上安装 OpenSSL 的最简单方法是使用 <a class="reference external" href="https://brew.sh/">Homebrew</a>。</p>
+<p>可以使用一下命令安装 Homebrew：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ /usr/bin/ruby -e <span class="s2">&quot;</span><span class="k">$(</span>curl -fsSL <span class="se">\</span>
+ https://raw.githubusercontent.com/Homebrew/install/master/install<span class="k">)</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>一旦安装完成，你就可以使用 <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span></code> 命令来安装所需的工具。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ brew install openssl xz zlib gdbm sqlite
+</pre></div>
+</div>
+<p>现在你已经安装了依赖项，你可以运行 <code class="docutils literal notranslate"><span class="pre">configure</span></code> 脚本。
+Homebrew 有一个命令 <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">--prefix</span> <span class="pre">[package]</span></code> ，它将给出安装包的目录。
+你将通过编译 Homebrew 使用的位置来启用对 SSL 的支持。</p>
+<p>标志 <code class="docutils literal notranslate"><span class="pre">--with-pydebug</span></code> 启用调试挂钩。如果你打算出于开发或测试目的进行调试，请添加此项。</p>
+<p>配置阶段只需要运行一次，同时指定 <code class="docutils literal notranslate"><span class="pre">zlib</span></code> 包的位置：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nv">CPPFLAGS</span><span class="o">=</span><span class="s2">&quot;-I</span><span class="k">$(</span>brew --prefix zlib<span class="k">)</span><span class="s2">/include&quot;</span> <span class="se">\</span>
+ <span class="nv">LDFLAGS</span><span class="o">=</span><span class="s2">&quot;-L</span><span class="k">$(</span>brew --prefix zlib<span class="k">)</span><span class="s2">/lib -L</span><span class="k">$(</span>brew --prefix bzip2<span class="k">)</span><span class="s2">/lib&quot;</span> <span class="se">\</span>
+ ./configure --with-openssl<span class="o">=</span><span class="k">$(</span>brew --prefix openssl<span class="k">)</span> --with-pydebug
+</pre></div>
+</div>
+<p>运行 <code class="docutils literal notranslate"><span class="pre">configure</span></code> 将在存储库的根目录中生成一个 <code class="docutils literal notranslate"><span class="pre">Makefile</span></code>，你可以使用它来自动化构建过程。</p>
+<p>你现在可以通过运行一下命令来构建 CPython 二进制文件：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make -j2 -s
+</pre></div>
+</div>
+<p>在构建过程中，你可能会收到一些错误。在构建摘要中，<code class="docutils literal notranslate"><span class="pre">make</span></code> 会通知你并非所有包都已构建。
+例如，<code class="docutils literal notranslate"><span class="pre">ossaudiodev</span></code>、<code class="docutils literal notranslate"><span class="pre">spwd</span></code> 和 <code class="docutils literal notranslate"><span class="pre">_tkinter</span></code> 将无法使用这组指令进行构建。
+如果你不打算针对这些软件包进行开发，那也没关系。
+如果是，请查看<a class="reference external" href="https://devguide.python.org/">官方开发指南</a>网站以获取更多信息。</p>
+<p>构建将需要几分钟并生成一个名为 <code class="docutils literal notranslate"><span class="pre">python.exe</span></code> 的二进制文件。每次对源代码进行更改时，
+你都会需要使用相同的标志重新运行 <code class="docutils literal notranslate"><span class="pre">make</span></code>。
+<code class="docutils literal notranslate"><span class="pre">python.exe</span></code> 二进制文件是 CPython 的调试二进制文件。
+执行 <code class="docutils literal notranslate"><span class="pre">python.exe</span></code> 以查看有效的 REPL：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./python.exe
+Python <span class="m">3</span>.9.0b1 <span class="o">(</span>tags/v3.9.0b1:97fe9cf, May <span class="m">19</span> <span class="m">2020</span>, <span class="m">10</span>:00:00<span class="o">)</span>
+<span class="o">[</span>Clang <span class="m">10</span>.0.1 <span class="o">(</span>clang-1001.0.46.4<span class="o">)]</span> on darwin
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<blockquote>
+<div><p>是的，没错，macOS 版本的文件扩展名为 <code class="docutils literal notranslate"><span class="pre">.exe</span></code>。 这个扩展<em>不是</em>因为它是 Windows 二进制文件！
+因为 macOS 有一个不区分大小写的文件系统，并且在使用二进制文件时，
+开发人员不希望人们不小心引用 <code class="docutils literal notranslate"><span class="pre">Python/</span></code> 目录，因此附加了 <code class="docutils literal notranslate"><span class="pre">.exe</span></code> 以避免歧义。
+如果你稍后运行 <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> 或 <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">altinstall</span></code>，
+它将在将文件安装到你的系统之前将文件重命名回 python。</p>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="the_standard_library.html" class="btn btn-neutral float-right" title="标准库" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="setting_up_your_development_environment.html" class="btn btn-neutral float-left" title="设置开发环境" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; 版权所有 2021, qiwihui.
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
