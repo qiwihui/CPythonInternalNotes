@@ -26,7 +26,7 @@ jobs:
         echo "${{ secrets.GH_DOMAIN }}" > build/html/CNAME
         apt update && apt install -y git rsync
     - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@releases/v3
+      uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
-        BRANCH: gh-pages
-        FOLDER: build/html
+        branch: gh-pages
+        folder: build/html
