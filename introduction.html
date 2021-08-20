@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>CPython Internal 笔记 &mdash; CPython Internal 笔记 0.0.1 文档</title>
+  <title>介绍 &mdash; CPython Internal 笔记 0.0.1 文档</title>
   
 
   
@@ -42,7 +42,8 @@
     
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="介绍" href="introduction.html" /> 
+    <link rel="next" title="设置开发环境" href="setting_up_your_development_environment.html" />
+    <link rel="prev" title="CPython Internal 笔记" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -56,7 +57,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> CPython Internal 笔记
+            <a href="index.html" class="icon icon-home"> CPython Internal 笔记
           
 
           
@@ -88,8 +89,12 @@
             
             
               <p class="caption" role="heading"><span class="caption-text">目录:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">介绍</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">介绍</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">在线资源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">代码协议</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="setting_up_your_development_environment.html">设置开发环境</a></li>
 <li class="toctree-l1"><a class="reference internal" href="the_standard_library.html">标准库</a></li>
 </ul>
@@ -107,7 +112,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">CPython Internal 笔记</a>
+          <a href="index.html">CPython Internal 笔记</a>
         
       </nav>
 
@@ -138,15 +143,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>CPython Internal 笔记</li>
+      <li>介绍</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/index.rst.txt" rel="nofollow"> 查看页面源码</a>
+            <a href="_sources/introduction.md.txt" rel="nofollow"> 查看页面源码</a>
           
         
       </li>
@@ -159,35 +164,33 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="cpython-internal">
-<h1>CPython Internal 笔记<a class="headerlink" href="#cpython-internal" title="永久链接至标题">¶</a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">目录:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">介绍</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html#id2">在线资源</a></li>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html#id3">代码协议</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="setting_up_your_development_environment.html">设置开发环境</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="setting_up_your_development_environment.html#visual-studio-code">设置 Visual Studio Code</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="the_standard_library.html">标准库</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="the_standard_library.html#python">Python 模块</a></li>
-<li class="toctree-l2"><a class="reference internal" href="the_standard_library.html#python-c">Python 和 C 模块</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="id1">
+<h1>介绍<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>这本书将涵盖 CPython 内部实现的主要概念，并学习如何：</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">索引</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">模块索引</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">搜索页面</span></a></p></li>
+<li><p>阅读和浏览源代码</p></li>
+<li><p>从源代码编译 CPython</p></li>
+<li><p>更改 Python 语法并将其编译到你的 CPython 版本中</p></li>
+<li><p>导航并理解诸如列表、字典和生成器的概念的内部工作原理</p></li>
+<li><p>掌握 CPython 的内存管理能力</p></li>
+<li><p>使用并行和并发扩展你的 Python 代码</p></li>
+<li><p>使用新功能修改核心类型</p></li>
+<li><p>运行测试套件</p></li>
+<li><p>分析和基准测试 Python 代码和运行时的性能</p></li>
+<li><p>像专家一样调试 C 和 Python 代码</p></li>
+<li><p>修改或升级 CPython 库的组件并将它们贡献给未来的版本</p></li>
 </ul>
+<div class="section" id="id2">
+<h2>在线资源<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://realpython.com/cpython-internals/resources/">CPython Internals resources</a></p>
+</div>
+<div class="section" id="id3">
+<h2>代码协议<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>遵循 <a class="reference external" href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Public Domain (CC0) License</a>。</p>
+<blockquote>
+<div><p>本书中的代码已经在 Windows 10、macOS 10.15 和 Linux 上使用 Python 3.9.0b1 进行了测试。</p>
+</div></blockquote>
+</div>
 </div>
 
 
@@ -196,7 +199,8 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="introduction.html" class="btn btn-neutral float-right" title="介绍" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="setting_up_your_development_environment.html" class="btn btn-neutral float-right" title="设置开发环境" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="CPython Internal 笔记" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
     </div>
 
   <hr/>

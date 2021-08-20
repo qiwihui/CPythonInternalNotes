@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>设置开发环境 &mdash; CPython Internal 笔记 0.0.1 文档</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="标准库" href="the_standard_library.html" />
+    <link rel="prev" title="介绍" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> CPython Internal 笔记
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">介绍</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">设置开发环境</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#visual-studio-code">设置 Visual Studio Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">配置任务和启动文件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="the_standard_library.html">标准库</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CPython Internal 笔记</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>设置开发环境</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/setting_up_your_development_environment.md.txt" rel="nofollow"> 查看页面源码</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>设置开发环境<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<p>CPython 源代码大约 65% 是 Python（测试是重要的部分）、24% C，其余是其他语言的混合。</p>
+<div class="section" id="visual-studio-code">
+<h2>设置 Visual Studio Code<a class="headerlink" href="#visual-studio-code" title="永久链接至标题">¶</a></h2>
+<p>从 <a class="reference external" href="https://code.visualstudio.com/">code.visualstudio.com</a> 下载 Visual Studio Code，并在本地安装。</p>
+<p>推荐的扩展：</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/Microsoft/vscode-cpptools">C/C++(ms-vscode.cpptools)</a> 提供对 C/C++ 的支持，包括 IntelliSense、调试和代码高亮。</p></li>
+<li><p><a class="reference external" href="https://github.com/Microsoft/vscode-python">Python(ms-python.python)</a> 为编辑、调试和阅读 Python 代码提供丰富的 Python 支持。</p></li>
+<li><p><a class="reference external" href="https://github.com/vscode-restructuredtext/vscode-restructuredtext">Restructured Text (lextudio.restructuredtext)</a>  为 reStructuredText（CPython 文档中使用的格式）提供丰富的支持。</p></li>
+<li><p><a class="reference external" href="https://github.com/spmeesseman/vscode-taskexplorer">Task Explorer (spmeesseman.vscode-taskexplorer)</a> 在资源管理器选项卡内添加“任务资源管理器”面板，可以更容易启动 make 任务。</p></li>
+</ul>
+<div class="section" id="id2">
+<h3>配置任务和启动文件<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>VS Code 在工作区目录中创建一个文件夹 <code class="docutils literal notranslate"><span class="pre">.vscode</span></code>。 在此文件夹中，你可以创建：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tasks.json</span></code> 用于执行项目命令的快捷方式</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">launch.json</span></code> 用于配置调试器</p></li>
+<li><p>其他特定于插件的文件</p></li>
+</ul>
+<p>在 <code class="docutils literal notranslate"><span class="pre">.vscode</span></code> 目录中创建一个 <code class="docutils literal notranslate"><span class="pre">tasks.json</span></code> 文件，并添加以下内容：</p>
+<p><code class="docutils literal notranslate"><span class="pre">cpython-book-samples/11/tasks.json</span></code>：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;tasks&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;build&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;group&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;build&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;isDefault&quot;</span><span class="p">:</span> <span class="kc">true</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;windows&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;PCBuild\build.bat&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-p x64 -c Debug&quot;</span><span class="p">]</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;linux&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;make -j2 -s&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;osx&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;make -j2 -s&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用任务资源管理器插件，你将在 vscode 组中看到你配置的任务列表。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="the_standard_library.html" class="btn btn-neutral float-right" title="标准库" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="introduction.html" class="btn btn-neutral float-left" title="介绍" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; 版权所有 2021, qiwihui.
+
+    </p>
+  </div>
+    
+    
+    
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
