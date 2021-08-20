@@ -7,6 +7,7 @@ CPython Internal 笔记
 
    introduction
    setting_up_your_development_environment
+   compiling_cpython
    the_standard_library
 
 Indices and tables
