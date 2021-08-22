@@ -94,6 +94,8 @@
 <li class="toctree-l1"><a class="reference internal" href="setting_up_your_development_environment.html">设置开发环境</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">编译 CPython</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#macos-cpython">在 macOS 系统上编译 CPython</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">配置文件引导优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">结论</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="the_standard_library.html">标准库</a></li>
@@ -235,6 +237,46 @@ Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&
 如果你稍后运行 <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> 或 <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">altinstall</span></code>，
 它将在将文件安装到你的系统之前将文件重命名回 python。</p>
 </div></blockquote>
+</div>
+<div class="section" id="id1">
+<h2>配置文件引导优化<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>macOS、Linux 和 Windows 构建过程具有“PGO”或“Profile Guided Optimization”标志。
+PGO 不是 Python 团队创建的东西，而是许多编译器的特性，包括 CPython 使用的编译器。</p>
+<p>PGO 的工作方式是进行初始编译，然后通过运行一系列测试来分析应用程序。
+然后分析创建的配置文件，编译器将对二进制文件进行更改以提高性能。</p>
+<p>对于 CPython，分析阶段运行 <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">test</span> <span class="pre">--pgo</span></code>，
+它执行在 <code class="docutils literal notranslate"><span class="pre">Lib/test/libregrtest/pgo.py</span></code> 中指定的回归测试。
+这些测试是专门选择的，因为它们使用常用的 C 扩展模块或类型。</p>
+<blockquote>
+<div><p>PGO 过程非常耗时，因此在整本书中，我将其排除在推荐步骤列表之外，以缩短编译时间。
+如果要将自定义编译版本的 CPython 分发到生产环境中，
+则应在 Linux 和 macOS 中使用 <code class="docutils literal notranslate"><span class="pre">--with-pgo</span></code> 标志运行 <code class="docutils literal notranslate"><span class="pre">./configure</span></code>，
+并在 Windows 上使用 <code class="docutils literal notranslate"><span class="pre">--pgo</span></code> 标志运行 <code class="docutils literal notranslate"><span class="pre">build.bat</span></code>。</p>
+</div></blockquote>
+<p>由于优化特定于执行配置文件的平台和架构，因此无法在操作系统或 CPU 架构之间共享 PGO 配置文件。
+python.org 上的 CPython 发行版已经通过 PGO，所以如果你在编译的二进制文件上运行基准测试，
+它会比从 python.org 下载的要慢。</p>
+<p>Windows、macOS 和 Linux 配置文件引导的优化包括以下检查和改进：</p>
+<ul class="simple">
+<li><p><strong>函数内联</strong> ── 如果函数被另一个函数定期调用，那么它将被“内联”以减少堆栈大小。</p></li>
+<li><p><strong>虚拟调用推测和内联</strong> ── 如果一个虚拟函数调用频繁地针对某个函数，
+PGO 可以插入一个有条件执行的对该函数的直接调用。然后可以内联直接调用。</p></li>
+<li><p><strong>寄存器分配优化</strong> ── 基于配置文件数据结果，PGO 将优化寄存器分配。</p></li>
+<li><p><strong>基本块优化</strong> ── 基本块优化允许在给定帧内临时执行的共同执行的基本块放置在同一组页面（局部性）中。
+它最大限度地减少了使用的页面数量，从而最大限度地减少了内存开销。</p></li>
+<li><p><strong>热点优化</strong> ── 程序花费最多执行时间的函数可以优化速度。</p></li>
+<li><p><strong>函数布局优化</strong> ── 在分析调用图之后，倾向于沿着相同执行路径的函数被移动到编译应用程序的同一部分。</p></li>
+<li><p><strong>条件分支优化</strong> - PGO 可以查看决策分支，如 <code class="docutils literal notranslate"><span class="pre">if..else</span> <span class="pre">if</span></code> 或 <code class="docutils literal notranslate"><span class="pre">switch</span></code> 语句，并找出最常用的路径。
+例如，如果 <code class="docutils literal notranslate"><span class="pre">switch</span></code> 语句中有 10 个 <code class="docutils literal notranslate"><span class="pre">case</span></code>，其中一个使用了 95% 的时间，那么它会被移到顶部，以便在代码路径中立即执行。</p></li>
+<li><p><strong>死点分离</strong> ── 在 PGO 期间未调用的代码被移动到应用程序的单独部分。</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>结论<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>在本章中，你已经了解了如何将 CPython 源代码编译成可工作的解释器。
+在探索和改编源代码时，你可以在整本书中使用这些知识。</p>
+<p>在使用 CPython 时，你可能需要重复编译步骤数十次甚至数百次。
+如果你可以调整你的开发环境来创建重新编译的快捷方式，最好现在就这样做，这样可以节省大量时间。</p>
 </div>
 </div>
 
