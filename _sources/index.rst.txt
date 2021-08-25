@@ -5,10 +5,11 @@ CPython Internal 笔记
    :maxdepth: 2
    :caption: 目录:
 
-   introduction
-   setting_up_your_development_environment
-   compiling_cpython
-   the_standard_library
+   _docs/introduction
+   _docs/setting_up_your_development_environment
+   _docs/compiling_cpython
+   _docs/the_python_language_and_grammer
+   _docs/the_standard_library
 
 Indices and tables
 ==================
